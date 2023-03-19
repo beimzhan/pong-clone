@@ -1,14 +1,10 @@
 #include "board.h"
-#include "clock.h"
 #include "paddle.h"
-
-enum { paddle_braking_time = 1500 };
 
 void paddle_initialize(struct paddle_t *paddle, int is_left)
 {
     paddle->y = (board_height - paddle_height) / 2 + 1;
     paddle->vy = 0;
-    gettimeofday(&paddle->moved_at, NULL);
     paddle->is_left = paddle->is_player = is_left;
 }
 
@@ -30,8 +26,6 @@ static void paddle_hide(WINDOW *win, const struct paddle_t *paddle)
 
 void paddle_move(WINDOW *win, struct paddle_t *paddle)
 {
-    if(milliseconds_elapsed(&paddle->moved_at) >= paddle_braking_time)
-        paddle->vy = 0;
     paddle_hide(win, paddle);
     paddle->y += paddle->vy;
     if(paddle->y < 1) {

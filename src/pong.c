@@ -1,3 +1,4 @@
+#include <sys/time.h>
 #include <sys/select.h>
 #include <ncurses.h>
 #include "board.h"
@@ -34,19 +35,18 @@ void pong_play()
             select(1, &readfds, NULL, NULL, &delay);
         } else {
             gettimeofday(&start, NULL);
+            flushinp();
         }
 
         ch = wgetch(board.window);
         switch(ch) {
             case KEY_UP:
                 board.lpaddle.vy = -1;
-                gettimeofday(&board.lpaddle.moved_at, NULL);
                 break;
             case KEY_DOWN:
                 board.lpaddle.vy = 1;
-                gettimeofday(&board.lpaddle.moved_at, NULL);
                 break;
-            case ' ':
+            case ERR:
                 board.lpaddle.vy = 0;
                 break;
         }
@@ -61,6 +61,7 @@ void pong_play()
                 case ball_left_scored:
                 case ball_right_scored:
                     ball_initialize(&board.ball);
+                    break;
                 case ball_in_play:
                     { }
             }

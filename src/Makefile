@@ -24,6 +24,6 @@ $(PROG): main.c $(OBJS)
 	$(CC) $^ $(LDFLAGS) -o $@
 
 clean:
-	rm -rf $(OBJS) $(PROG) deps.mk
+	rm -rf *.o $(PROG) deps.mk
 
 .PHONY = all clean

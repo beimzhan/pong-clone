@@ -4,7 +4,6 @@
 #include <ncurses.h>
 
 enum { ball_icon = '*' };
-enum { ball_vx = 1, ball_vy = 1 };
 
 struct ball_t {
     int x, y, vx, vy;
