@@ -46,6 +46,9 @@ void pong_play()
                 board.lpaddle.vy = 1;
                 gettimeofday(&board.lpaddle.moved_at, NULL);
                 break;
+            case ' ':
+                board.lpaddle.vy = 0;
+                break;
         }
 
         if(milliseconds_elapsed(&start) >= delay_duration) {
