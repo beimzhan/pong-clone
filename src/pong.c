@@ -39,15 +39,11 @@ void pong_play()
         ch = wgetch(board.window);
         switch(ch) {
             case KEY_UP:
-                board.lpaddle.vy--;
-                if(board.lpaddle.vy < -paddle_max_abs_velocity)
-                    board.lpaddle.vy = -paddle_max_abs_velocity;
+                board.lpaddle.vy = -1;
                 gettimeofday(&board.lpaddle.moved_at, NULL);
                 break;
             case KEY_DOWN:
-                board.lpaddle.vy++;
-                if(board.lpaddle.vy > paddle_max_abs_velocity)
-                    board.lpaddle.vy = paddle_max_abs_velocity;
+                board.lpaddle.vy = 1;
                 gettimeofday(&board.lpaddle.moved_at, NULL);
                 break;
         }

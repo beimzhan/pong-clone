@@ -5,8 +5,6 @@
 #include <ncurses.h>
 
 enum { paddle_height = 3 };
-enum { paddle_max_abs_velocity = 2 };
-enum { paddle_braking_time = 30000 };
 
 struct paddle_t {
     int y, vy, is_player, is_left;
