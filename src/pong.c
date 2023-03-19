@@ -52,7 +52,19 @@ void pong_play()
         }
 
         if(milliseconds_elapsed(&start) >= delay_duration) {
+            enum ball_move_result result;
+
             paddle_move(board.window, &board.lpaddle);
+
+            result = ball_move(&board);
+            switch(result) {
+                case ball_left_scored:
+                case ball_right_scored:
+                    ball_initialize(&board.ball);
+                case ball_in_play:
+                    { }
+            }
+
             wrefresh(board.window);
         }
     }
