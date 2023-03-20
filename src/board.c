@@ -32,13 +32,15 @@ enum ball_move_result ball_move(struct board_t *board)
 
     board->ball.x += board->ball.vx;
     if(will_ball_bounce_off_lpaddle(board)) {
+        if(!(board->ball.y == 1 || board->ball.y == board_height))
+            board->ball.vy = -board->ball.vy;
         board->ball.vx = 1;
-        board->ball.vy = -board->ball.vy;
     } else if(board->ball.x < 1) {
         return ball_right_scored;
     } else if(will_ball_bounce_off_rpaddle(board)) {
+        if(!(board->ball.y == 1 || board->ball.y == board_height))
+            board->ball.vy = -board->ball.vy;
         board->ball.vx = -1;
-        board->ball.vy = -board->ball.vy;
     } else if(board->ball.x > board_width) {
         return ball_left_scored;
     }
