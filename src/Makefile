@@ -1,6 +1,6 @@
 CC = gcc
 
-CFLAGS = -g -Wall -Wextra -ansi -pedantic
+CFLAGS = -g -Wall -Wextra
 LDFLAGS = -lncurses
 
 SRCS = $(filter-out main.c, $(wildcard *.c))
