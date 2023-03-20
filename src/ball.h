@@ -3,13 +3,13 @@
 
 #include <ncurses.h>
 
-enum { ball_icon = '*' };
+enum { ball_icon = '@' };
 
 struct ball_t {
     int x, y, vx, vy;
 };
 
-void ball_initialize(struct ball_t *ball);
+void ball_initialize(struct ball_t *ball, int at_bottom);
 void ball_hide(WINDOW *win, const struct ball_t *ball);
 void ball_show(WINDOW *win, const struct ball_t *ball);
 

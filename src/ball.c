@@ -2,17 +2,12 @@
 #include "ball.h"
 #include "board.h"
 
-static int ball_random_velocity()
+void ball_initialize(struct ball_t *ball, int at_bottom)
 {
-    return rand() % 2 == 0 ? 1 : -1;
-}
-
-void ball_initialize(struct ball_t *ball)
-{
-    ball->x = board_width / 2 + 1;
-    ball->y = board_height / 2 + 1;
-    ball->vx = ball_random_velocity();
-    ball->vy = ball_random_velocity();
+    ball->x = rand() % board_width + 1;
+    ball->y = at_bottom ? board_height - 1 : 2;
+    ball->vx = rand() % 2 ? -1 : 1;
+    ball->vy = at_bottom ? -1 : 1;
 }
 
 void ball_hide(WINDOW *win, const struct ball_t *ball)

@@ -5,17 +5,17 @@
 #include "ball.h"
 #include "paddle.h"
 
-enum { board_width = 75, board_height = 20 };
+enum { board_width = 60, board_height = 22 };
 
 enum ball_move_result {
-    ball_in_play, ball_left_scored, ball_right_scored
+    ball_in_play, ball_top_scored, ball_bottom_scored
 };
 
 struct board_t {
     WINDOW *window;
     int x, y;
     struct ball_t ball;
-    struct paddle_t lpaddle, rpaddle;
+    struct paddle_t tpaddle, bpaddle;
 };
 
 enum ball_move_result ball_move(struct board_t *board);

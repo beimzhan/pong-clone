@@ -5,7 +5,7 @@
 #include "clock.h"
 #include "pong.h"
 
-enum { delay_duration = 100 };
+enum { delay_duration = 100, spawn_delay = 1000 };
 
 void pong_play()
 {
@@ -40,27 +40,30 @@ void pong_play()
 
         ch = wgetch(board.window);
         switch(ch) {
-            case KEY_UP:
-                board.lpaddle.vy = -1;
+            case KEY_LEFT:
+                board.bpaddle.vx = -1;
                 break;
-            case KEY_DOWN:
-                board.lpaddle.vy = 1;
+            case KEY_RIGHT:
+                board.bpaddle.vx = 1;
                 break;
             case ERR:
-                board.lpaddle.vy = 0;
+                board.bpaddle.vx = 0;
                 break;
         }
 
         if(milliseconds_elapsed(&start) >= delay_duration) {
             enum ball_move_result result;
 
-            paddle_move(board.window, &board.lpaddle);
+            paddle_move(board.window, &board.bpaddle);
 
+            mvwhline(board.window, board_height / 2, 1, '.', board_width);
             result = ball_move(&board);
             switch(result) {
-                case ball_left_scored:
-                case ball_right_scored:
-                    ball_initialize(&board.ball);
+                case ball_top_scored:
+                    ball_initialize(&board.ball, 0);
+                    break;
+                case ball_bottom_scored:
+                    ball_initialize(&board.ball, 1);
                     break;
                 case ball_in_play:
                     { }
