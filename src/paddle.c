@@ -9,6 +9,7 @@ void paddle_initialize(WINDOW *win, struct paddle_t *paddle, int is_bottom)
     paddle->x = (board_width - paddle_width) / 2 + 1;
     paddle->vx = 0;
     paddle->is_bottom = paddle->is_player = is_bottom;
+    paddle->score = 0;
     paddle_show(win, paddle);
 
     gettimeofday(&paddle->moved_at, NULL);
