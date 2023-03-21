@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include <sys/select.h>
 #include <ncurses.h>
 #include "board.h"
@@ -5,7 +6,8 @@
 #include "clock.h"
 #include "pong.h"
 
-enum { delay_duration = 50 };
+enum { delay_duration = 10 };
+enum { tpaddle_delay = 80 };
 
 enum pong_state_t {
     pong_enter_s, pong_update_s, pong_leave_s
@@ -14,6 +16,31 @@ enum pong_state_t {
 static int check_screen_size()
 {
     return COLS >= board_width + 2 && LINES >= board_height + 2;
+}
+
+void tpaddle_move(struct board_t *board)
+{
+    if(milliseconds_elapsed(&board->tpaddle.moved_at) < tpaddle_delay)
+        return;
+
+    if(board->ball.vy == -1) {
+        if(board->ball.vx == -1)
+        {
+            if(board->ball.x < board->tpaddle.x + paddle_width / 2)
+                board->tpaddle.vx = -1;
+            else
+                board->tpaddle.vx = 1;
+        }
+        else if(board->ball.vx == 1)
+        {
+            if(board->ball.x > board->tpaddle.x + paddle_width / 2)
+                board->tpaddle.vx = 1;
+            else
+                board->tpaddle.vx = -1;
+        }
+    }
+
+    paddle_move(board->window, &board->tpaddle);
 }
 
 static void pong_update(struct board_t *board, enum pong_state_t *state)
@@ -55,6 +82,7 @@ static void pong_update(struct board_t *board, enum pong_state_t *state)
         enum ball_move_result result;
 
         paddle_move(board->window, &board->bpaddle);
+        tpaddle_move(board);
         board_net_show(board->window);
         ball_move(board, &result);
         switch(result) {

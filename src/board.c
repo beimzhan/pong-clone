@@ -43,9 +43,10 @@ static int will_ball_bounce_off_bpaddle(const struct board_t *board)
 
 static void ball_bounce(struct ball_t *ball, const struct paddle_t *paddle)
 {
+    int dx = paddle->x - paddle_width / 2 - ball->x;
     ball->vy *= -1;
-    if(!(ball->x == 1 || ball->x == board_width))
-        ball->vx = (paddle->x + paddle_width - 1) / 2 - ball->x < 0 ? 1 : -1;
+    if(ball->x != 1 && ball->x != board_width && paddle->is_bottom && dx >= 0)
+        ball->vx *= -1;
 }
 
 void ball_move(struct board_t *board, enum ball_move_result *result)
