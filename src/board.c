@@ -84,21 +84,32 @@ void ball_move(struct board_t *board, enum ball_move_result *result)
     ball_show(board->window, &board->ball);
 }
 
+static void board_window_create(WINDOW **win)
+{
+    int x, y;
+    x = (COLS - (board_width + 2)) / 2;
+    y = (LINES - (board_height + 2)) / 2;
+    *win = newwin(board_height + 2, board_width + 2, y, x);
+    box(*win, 0, 0);
+    keypad(*win, TRUE);
+    wtimeout(*win, 0);
+}
+
+void board_window_erase(WINDOW *win)
+{
+    wclear(win);
+    wrefresh(win);
+    delwin(win);
+}
+
 void board_initialize(struct board_t *board)
 {
-    board->x = (COLS - (board_width + 2)) / 2;
-    board->y = (LINES - (board_height + 2)) / 2;
-    board->window =
-        newwin(board_height + 2, board_width + 2, board->y, board->x);
-    box(board->window, 0, 0);
+    board_window_create(&board->window);
 
     ball_initialize(board, rand() % 2);
 
-    paddle_initialize(&board->tpaddle, 0);
-    paddle_initialize(&board->bpaddle, 1);
-
-    paddle_show(board->window, &board->tpaddle);
-    paddle_show(board->window, &board->bpaddle);
+    paddle_initialize(board->window, &board->tpaddle, 0);
+    paddle_initialize(board->window, &board->bpaddle, 1);
 
     board_net_show(board->window);
 
@@ -107,9 +118,13 @@ void board_initialize(struct board_t *board)
     gettimeofday(&board->loop_start, NULL);
 }
 
-void board_erase(struct board_t *board)
+void board_reinitialize(struct board_t *board)
 {
-    wborder(board->window, ' ', ' ', ' ',' ',' ',' ',' ',' ');
+    board_window_erase(board->window);
+    board_window_create(&board->window);
+    paddle_show(board->window, &board->tpaddle);
+    paddle_show(board->window, &board->bpaddle);
+    board_net_show(board->window);
+    ball_show(board->window, &board->ball);
     wrefresh(board->window);
-    delwin(board->window);
 }

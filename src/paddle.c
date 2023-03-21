@@ -4,11 +4,13 @@
 
 enum { paddle_delay = 50 };
 
-void paddle_initialize(struct paddle_t *paddle, int is_bottom)
+void paddle_initialize(WINDOW *win, struct paddle_t *paddle, int is_bottom)
 {
     paddle->x = (board_width - paddle_width) / 2 + 1;
     paddle->vx = 0;
     paddle->is_bottom = paddle->is_player = is_bottom;
+    paddle_show(win, paddle);
+
     gettimeofday(&paddle->moved_at, NULL);
 }
 
@@ -32,7 +34,7 @@ void paddle_move(WINDOW *win, struct paddle_t *paddle)
 {
     if(milliseconds_elapsed(&paddle->moved_at) < paddle_delay)
         return;
-    
+
     gettimeofday(&paddle->moved_at, NULL);
 
     paddle_hide(win, paddle);
