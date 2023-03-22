@@ -11,8 +11,8 @@ enum { new_game_delay = 5 };
 enum { win_score = 5 };
 
 #define BPADDLE_WIN_MSG "Congratulations on your victory!"
-#define TPADDLE_WIN_MSG "I'm sorry to inform you that the bot has won."
-#define SUGGEST_NEW_GAME "Press any key to start a new game. %ds"
+#define TPADDLE_WIN_MSG "Bot is the winner :("
+#define SUGGEST_NEW_GAME "Press any key to start a new game. %ds."
 
 enum pong_state_t {
     pong_enter_s, pong_update_s, pong_game_over_s,
