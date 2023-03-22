@@ -1,5 +1,4 @@
 #include <stdlib.h>
-#include <sys/select.h>
 #include <ncurses.h>
 #include "board.h"
 #include "ball.h"
@@ -61,16 +60,10 @@ static void pong_display_scores(const struct board_t *board)
 static void pong_update(struct board_t *board, enum pong_state_t *state)
 {
     int ch, since_start;
-    struct timeval delay;
-    fd_set readfds;
 
     since_start = milliseconds_elapsed(&board->loop_start);
     if(since_start < delay_duration) {
-        FD_ZERO(&readfds);
-        FD_SET(0, &readfds);
-        delay.tv_sec = 0;
-        delay.tv_usec = (delay_duration - since_start) * 1000;
-        select(1, &readfds, NULL, NULL, &delay);
+        wtimeout(board->window, delay_duration - since_start);
     } else {
         gettimeofday(&board->loop_start, NULL);
         flushinp();
