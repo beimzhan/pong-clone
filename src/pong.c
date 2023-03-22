@@ -5,14 +5,20 @@
 #include "clock.h"
 #include "pong.h"
 
-enum { delay_duration = 10 };
+enum { tick_duration = 10 };
 enum { tpaddle_delay = 60 };
-enum { new_game_delay = 5 };
 enum { win_score = 5 };
 
-#define BPADDLE_WIN_MSG "Congratulations on your victory!"
-#define TPADDLE_WIN_MSG "Bot is the winner :("
-#define SUGGEST_NEW_GAME "Press any key to start a new game. %ds."
+enum {
+    restart_delay = 5, /* seconds */
+    restart_tick_duration = 1000 /* milliseconds */
+};
+
+const char bpaddle_win_msg[] = "Congratulations on your victory!";
+const char tpaddle_win_msg[] = "Bot is the winner :(";
+
+const char restart_message[] =
+    "Press any key to start a new game. %d seconds left.";
 
 enum pong_state_t {
     pong_enter_s, pong_update_s, pong_game_over_s,
@@ -62,8 +68,8 @@ static void pong_update(struct board_t *board, enum pong_state_t *state)
     int ch, since_start;
 
     since_start = milliseconds_elapsed(&board->loop_start);
-    if(since_start < delay_duration) {
-        wtimeout(board->window, delay_duration - since_start);
+    if(since_start < tick_duration) {
+        wtimeout(board->window, tick_duration - since_start);
     } else {
         gettimeofday(&board->loop_start, NULL);
         flushinp();
@@ -86,7 +92,7 @@ static void pong_update(struct board_t *board, enum pong_state_t *state)
             break;
     }
 
-    if(milliseconds_elapsed(&board->loop_start) >= delay_duration) {
+    if(milliseconds_elapsed(&board->loop_start) >= tick_duration) {
         enum ball_move_result result;
 
         paddle_move(board->window, &board->bpaddle);
@@ -113,35 +119,32 @@ static void pong_update(struct board_t *board, enum pong_state_t *state)
 
 void pong_game_over(const struct board_t *board, int *start_new_game)
 {
-    int ch, remaining_time = new_game_delay;
+    int x, y, time_left, ch;
 
-    if(board->bpaddle.score == win_score)
-        mvwprintw(board->window,
-            board_height / 2 - 1,
-            (board_width - sizeof(BPADDLE_WIN_MSG) - 1) / 2,
-            BPADDLE_WIN_MSG);
-    else
-        mvwprintw(board->window,
-            board_height /2 - 1,
-            (board_width - sizeof(TPADDLE_WIN_MSG) - 1) / 2,
-            TPADDLE_WIN_MSG);
-    wtimeout(board->window, 1000); /* 1 second */
-    while(remaining_time > 0) {
-        mvwprintw(board->window,
-            board_height / 2 + 1,
-            (board_width - sizeof(SUGGEST_NEW_GAME) - 1) / 2,
-            SUGGEST_NEW_GAME, remaining_time);
+    *start_new_game = 0;
+
+    y = board_height / 2 - 1;
+    if(board->bpaddle.score == win_score) {
+        x = (board_width - sizeof(bpaddle_win_msg) + 1) / 2;
+        mvwprintw(board->window, y, x, bpaddle_win_msg);
+    } else {
+        x = (board_width - sizeof(tpaddle_win_msg) + 1) / 2;
+        mvwprintw(board->window, y, x, tpaddle_win_msg);
+    }
+
+    x = (board_width - sizeof(restart_message) + 4) / 2;
+    y = board_height / 2 + 1;
+    for(time_left = restart_delay; time_left > 0; time_left--) {
+        mvwprintw(board->window, y, x, restart_message, time_left);
         wrefresh(board->window);
+        napms(restart_tick_duration);
+
         ch = wgetch(board->window);
         if(ch != ERR) {
             *start_new_game = 1;
-            return;
+            break;
         }
-
-        remaining_time--;
     }
-    if(ch == ERR)
-        *start_new_game = 0;
 }
 
 void pong_play()
