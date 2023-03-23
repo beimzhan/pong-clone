@@ -7,5 +7,5 @@ void ball_hide(WINDOW *win, const struct ball_t *ball)
 
 void ball_show(WINDOW *win, const struct ball_t *ball)
 {
-    mvwaddch(win, ball->y, ball->x, ball_icon);
+    mvwaddch(win, ball->y, ball->x, '@');
 }

@@ -108,6 +108,7 @@ static void pong_update(struct board_t *board, enum pong_state_t *state)
                 board->bpaddle.score++;
                 ball_initialize(board, 1);
                 break;
+            case ball_didnt_move:
             case ball_in_play:
                 { }
         }

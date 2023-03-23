@@ -4,7 +4,6 @@
 #include <sys/time.h>
 #include <ncurses.h>
 
-enum { ball_icon = '@' };
 enum { ball_spawn_delay = 1000 };
 
 struct ball_t {

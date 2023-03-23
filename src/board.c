@@ -24,7 +24,7 @@ void ball_initialize(struct board_t *board, int at_bottom)
 static int will_ball_bounce_off_paddle(const struct ball_t *ball,
     const struct paddle_t *paddle)
 {
-    return ball->y == (paddle->is_bottom ? paddle->y - 1 : paddle-> y + 1) &&
+    return ball->y == (paddle->is_bottom ? paddle->y - 1 : paddle->y + 1) &&
         ((ball->x >= paddle->x && ball->x < paddle->x + paddle_width) ||
             (ball->x == paddle->x - 1 && ball->vx == 1) ||
             (ball->x == paddle->x + paddle_width && ball->vx == -1));
@@ -41,13 +41,14 @@ static void ball_bounce(struct ball_t *ball, const struct paddle_t *paddle)
 
 void ball_move(struct board_t *board, enum ball_move_result *result)
 {
-    *result = ball_in_play;
-
     if(milliseconds_elapsed(&board->ball.spawned_at) < ball_spawn_delay ||
         milliseconds_elapsed(&board->ball.moved_at) < ball_delay)
     {
+        *result = ball_didnt_move;
         return;
     }
+
+    *result = ball_in_play;
 
     gettimeofday(&board->ball.moved_at, NULL);
 
