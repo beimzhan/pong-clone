@@ -57,10 +57,9 @@ static void tpaddle_move(struct board_t *board)
 
 static void pong_display_scores(const struct board_t *board)
 {
-    mvwprintw(board->window, board_height / 2 - 1, 3, "%d",
-        board->tpaddle.score);
-    mvwprintw(board->window, board_height / 2 + 1, 3, "%d",
-        board->bpaddle.score);
+    int y = board_height / 2;
+    mvwprintw(board->window, y - 1, 3, "%d", board->tpaddle.score);
+    mvwprintw(board->window, y + 1, 3, "%d", board->bpaddle.score);
 }
 
 static void pong_update(struct board_t *board, enum pong_state_t *state)
@@ -100,11 +99,11 @@ static void pong_update(struct board_t *board, enum pong_state_t *state)
         board_net_show(board->window);
         ball_move(board, &result);
         switch(result) {
-            case ball_top_scored:
+            case ball_tpaddle_scored:
                 board->tpaddle.score++;
                 ball_initialize(board, 0);
                 break;
-            case ball_bottom_scored:
+            case ball_bpaddle_scored:
                 board->bpaddle.score++;
                 ball_initialize(board, 1);
                 break;

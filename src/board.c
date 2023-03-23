@@ -25,9 +25,7 @@ static int will_ball_bounce_off_paddle(const struct ball_t *ball,
     const struct paddle_t *paddle)
 {
     return ball->y == (paddle->is_bottom ? paddle->y - 1 : paddle->y + 1) &&
-        ((ball->x >= paddle->x && ball->x < paddle->x + paddle_width) ||
-            (ball->x == paddle->x - 1 && ball->vx == 1) ||
-            (ball->x == paddle->x + paddle_width && ball->vx == -1));
+        ball->x >= paddle->x - 1 && ball->x <= paddle->x + paddle_width;
 }
 
 static void ball_bounce(struct ball_t *ball, const struct paddle_t *paddle)
@@ -64,12 +62,12 @@ void ball_move(struct board_t *board, enum ball_move_result *result)
     if(will_ball_bounce_off_paddle(&board->ball, &board->tpaddle)) {
         ball_bounce(&board->ball, &board->tpaddle);
     } else if(board->ball.y < 1) {
-        *result = ball_bottom_scored;
+        *result = ball_bpaddle_scored;
         return;
     } else if(will_ball_bounce_off_paddle(&board->ball, &board->bpaddle)) {
         ball_bounce(&board->ball, &board->bpaddle);
     } else if(board->ball.y > board_height) {
-        *result = ball_top_scored;
+        *result = ball_tpaddle_scored;
         return;
     }
 

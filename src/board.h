@@ -9,7 +9,7 @@
 enum { board_width = 60, board_height = 22 };
 
 enum ball_move_result {
-    ball_didnt_move, ball_in_play, ball_top_scored, ball_bottom_scored
+    ball_didnt_move, ball_in_play, ball_tpaddle_scored, ball_bpaddle_scored
 };
 
 struct board_t {
