@@ -9,7 +9,7 @@ enum { ball_spawn_delay = 1000 };
 
 struct ball_t {
     int x, y, vx, vy;
-    struct timeval spawn_time, moved_at;
+    struct timeval spawned_at, moved_at;
 };
 
 void ball_hide(WINDOW *win, const struct ball_t *ball);

@@ -117,11 +117,11 @@ static void pong_update(struct board_t *board, enum pong_state_t *state)
     }
 }
 
-void pong_game_over(const struct board_t *board, int *start_new_game)
+void pong_game_over(const struct board_t *board, int *restart)
 {
     int x, y, time_left, ch;
 
-    *start_new_game = 0;
+    *restart = 0;
 
     y = board_height / 2 - 1;
     if(board->bpaddle.score == win_score) {
@@ -141,7 +141,7 @@ void pong_game_over(const struct board_t *board, int *start_new_game)
 
         ch = wgetch(board->window);
         if(ch != ERR) {
-            *start_new_game = 1;
+            *restart = 1;
             break;
         }
     }
@@ -151,7 +151,7 @@ void pong_play()
 {
     struct board_t board;
     enum pong_state_t pong_state = pong_enter_s;
-    int start_new_game;
+    int restart;
 
     initscr();
     cbreak();
@@ -178,9 +178,9 @@ void pong_play()
                 }
                 break;
             case pong_game_over_s:
-                pong_game_over(&board, &start_new_game);
+                pong_game_over(&board, &restart);
                 board_window_erase(board.window);
-                if(start_new_game)
+                if(restart)
                     pong_state = pong_enter_s;
                 else
                     pong_state = pong_leave_s;

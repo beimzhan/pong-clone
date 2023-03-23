@@ -7,7 +7,7 @@
 enum { paddle_width = 10 };
 
 struct paddle_t {
-    int x, vx, is_player, is_bottom, score;
+    int x, y, vx, is_player, is_bottom, score;
     struct timeval moved_at;
 };
 

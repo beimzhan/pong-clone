@@ -7,6 +7,7 @@ enum { paddle_delay = 50 };
 void paddle_initialize(WINDOW *win, struct paddle_t *paddle, int is_bottom)
 {
     paddle->x = (board_width - paddle_width) / 2 + 1;
+    paddle->y = is_bottom ? board_height : 1;
     paddle->vx = 0;
     paddle->is_bottom = paddle->is_player = is_bottom;
     paddle->score = 0;
@@ -17,18 +18,12 @@ void paddle_initialize(WINDOW *win, struct paddle_t *paddle, int is_bottom)
 
 void paddle_show(WINDOW *win, const struct paddle_t *paddle)
 {
-    mvwhline(win,
-        paddle->is_bottom ? board_height : 1, paddle->x,
-        '#', paddle_width
-    );
+    mvwhline(win, paddle->y, paddle->x, '#', paddle_width);
 }
 
 static void paddle_hide(WINDOW *win, const struct paddle_t *paddle)
 {
-    mvwhline(win,
-        paddle->is_bottom ? board_height : 1, paddle->x,
-        ' ', paddle_width
-    );
+    mvwhline(win, paddle->y, paddle->x, ' ', paddle_width);
 }
 
 void paddle_move(WINDOW *win, struct paddle_t *paddle)

@@ -17,33 +17,23 @@ void ball_initialize(struct board_t *board, int at_bottom)
     board->ball.vy = at_bottom ? -1 : 1;
     ball_show(board->window, &board->ball);
 
-    gettimeofday(&board->ball.spawn_time, NULL);
-    board->ball.moved_at = board->ball.spawn_time;
+    gettimeofday(&board->ball.spawned_at, NULL);
+    board->ball.moved_at = board->ball.spawned_at;
 }
 
-static int will_ball_bounce_off_tpaddle(const struct board_t *board)
+static int will_ball_bounce_off_paddle(const struct ball_t *ball,
+    const struct paddle_t *paddle)
 {
-    return board->ball.y == 2 &&
-        ((board->ball.x >= board->tpaddle.x &&
-            board->ball.x < board->tpaddle.x + paddle_width) ||
-        (board->ball.x == board->tpaddle.x - 1 && board->ball.vx == 1) ||
-        (board->ball.x == board->tpaddle.x + paddle_width &&
-            board->ball.vx == -1));
-}
-
-static int will_ball_bounce_off_bpaddle(const struct board_t *board)
-{
-    return board->ball.y == board_height - 1 &&
-        ((board->ball.x >= board->bpaddle.x &&
-            board->ball.x < board->bpaddle.x + paddle_width) ||
-        (board->ball.x == board->bpaddle.x - 1 && board->ball.vx == 1) ||
-        (board->ball.x == board->bpaddle.x + paddle_width &&
-            board->ball.vx == -1));
+    return ball->y == (paddle->is_bottom ? paddle->y - 1 : paddle-> y + 1) &&
+        ((ball->x >= paddle->x && ball->x < paddle->x + paddle_width) ||
+            (ball->x == paddle->x - 1 && ball->vx == 1) ||
+            (ball->x == paddle->x + paddle_width && ball->vx == -1));
 }
 
 static void ball_bounce(struct ball_t *ball, const struct paddle_t *paddle)
 {
     int dx = paddle->x - paddle_width / 2 - ball->x;
+
     ball->vy *= -1;
     if(ball->x != 1 && ball->x != board_width && paddle->is_bottom && dx >= 0)
         ball->vx *= -1;
@@ -53,7 +43,7 @@ void ball_move(struct board_t *board, enum ball_move_result *result)
 {
     *result = ball_in_play;
 
-    if(milliseconds_elapsed(&board->ball.spawn_time) < ball_spawn_delay ||
+    if(milliseconds_elapsed(&board->ball.spawned_at) < ball_spawn_delay ||
         milliseconds_elapsed(&board->ball.moved_at) < ball_delay)
     {
         return;
@@ -70,12 +60,12 @@ void ball_move(struct board_t *board, enum ball_move_result *result)
         board->ball.vx = -1;
 
     board->ball.y += board->ball.vy;
-    if(will_ball_bounce_off_tpaddle(board)) {
+    if(will_ball_bounce_off_paddle(&board->ball, &board->tpaddle)) {
         ball_bounce(&board->ball, &board->tpaddle);
     } else if(board->ball.y < 1) {
         *result = ball_bottom_scored;
         return;
-    } else if(will_ball_bounce_off_bpaddle(board)) {
+    } else if(will_ball_bounce_off_paddle(&board->ball, &board->bpaddle)) {
         ball_bounce(&board->ball, &board->bpaddle);
     } else if(board->ball.y > board_height) {
         *result = ball_top_scored;
