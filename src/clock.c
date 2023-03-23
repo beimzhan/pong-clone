@@ -1,5 +1,4 @@
 #include <stddef.h>
-#include <sys/time.h>
 #include "clock.h"
 
 int milliseconds_between(const struct timeval *end,

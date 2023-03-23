@@ -4,8 +4,6 @@
 #include <sys/time.h>
 #include <ncurses.h>
 
-enum { ball_spawn_delay = 1000 };
-
 struct ball_t {
     int x, y, vx, vy;
     struct timeval spawned_at, moved_at;
@@ -13,5 +11,7 @@ struct ball_t {
 
 void ball_hide(WINDOW *win, const struct ball_t *ball);
 void ball_show(WINDOW *win, const struct ball_t *ball);
+
+void ball_initialize(WINDOW *win, struct ball_t *ball, int at_bottom);
 
 #endif

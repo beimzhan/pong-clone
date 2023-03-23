@@ -1,77 +1,16 @@
 #include <stdlib.h>
 #include "clock.h"
+#include "constants.h"
 #include "board.h"
 
-enum { ball_delay = 100 };
+int check_screen_size()
+{
+    return COLS >= board_width + 2 && LINES >= board_height + 2;
+}
 
 void board_net_show(WINDOW *win)
 {
     mvwhline(win, board_height / 2, 1, '.', board_width);
-}
-
-void ball_initialize(struct board_t *board, int at_bottom)
-{
-    board->ball.x = rand() % (board_width - 2) + 2;
-    board->ball.y = at_bottom ? board_height - 1 : 2;
-    board->ball.vx = rand() % 2 ? -1 : 1;
-    board->ball.vy = at_bottom ? -1 : 1;
-    ball_show(board->window, &board->ball);
-
-    gettimeofday(&board->ball.spawned_at, NULL);
-    board->ball.moved_at = board->ball.spawned_at;
-}
-
-static int will_ball_bounce_off_paddle(const struct ball_t *ball,
-    const struct paddle_t *paddle)
-{
-    return ball->y == (paddle->is_bottom ? paddle->y - 1 : paddle->y + 1) &&
-        ball->x >= paddle->x - 1 && ball->x <= paddle->x + paddle_width;
-}
-
-static void ball_bounce(struct ball_t *ball, const struct paddle_t *paddle)
-{
-    int dx = paddle->x - paddle_width / 2 - ball->x;
-
-    ball->vy *= -1;
-    if(ball->x != 1 && ball->x != board_width && paddle->is_bottom && dx >= 0)
-        ball->vx *= -1;
-}
-
-void ball_move(struct board_t *board, enum ball_move_result *result)
-{
-    if(milliseconds_elapsed(&board->ball.spawned_at) < ball_spawn_delay ||
-        milliseconds_elapsed(&board->ball.moved_at) < ball_delay)
-    {
-        *result = ball_didnt_move;
-        return;
-    }
-
-    *result = ball_in_play;
-
-    gettimeofday(&board->ball.moved_at, NULL);
-
-    ball_hide(board->window, &board->ball);
-
-    board->ball.x += board->ball.vx;
-    if(board->ball.x == 1)
-        board->ball.vx = 1;
-    else if(board->ball.x == board_width)
-        board->ball.vx = -1;
-
-    board->ball.y += board->ball.vy;
-    if(will_ball_bounce_off_paddle(&board->ball, &board->tpaddle)) {
-        ball_bounce(&board->ball, &board->tpaddle);
-    } else if(board->ball.y < 1) {
-        *result = ball_bpaddle_scored;
-        return;
-    } else if(will_ball_bounce_off_paddle(&board->ball, &board->bpaddle)) {
-        ball_bounce(&board->ball, &board->bpaddle);
-    } else if(board->ball.y > board_height) {
-        *result = ball_tpaddle_scored;
-        return;
-    }
-
-    ball_show(board->window, &board->ball);
 }
 
 static void board_window_create(WINDOW **win)
@@ -96,7 +35,7 @@ void board_initialize(struct board_t *board)
 {
     board_window_create(&board->window);
 
-    ball_initialize(board, rand() % 2);
+    ball_initialize(board->window, &board->ball, rand() % 2);
 
     paddle_initialize(board->window, &board->tpaddle, 0);
     paddle_initialize(board->window, &board->bpaddle, 1);

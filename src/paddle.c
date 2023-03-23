@@ -1,8 +1,8 @@
-#include "board.h"
+#include <stdlib.h>
+#include "ball.h"
 #include "clock.h"
+#include "constants.h"
 #include "paddle.h"
-
-enum { paddle_delay = 50 };
 
 void paddle_initialize(WINDOW *win, struct paddle_t *paddle, int is_bottom)
 {
@@ -29,14 +29,17 @@ static void paddle_hide(WINDOW *win, const struct paddle_t *paddle)
     mvwhline(win, paddle->y, paddle->x, ' ', paddle_width);
 }
 
-void paddle_move(WINDOW *win, struct paddle_t *paddle)
+static void paddle_move(WINDOW *win, struct paddle_t *paddle,
+    const struct ball_t *ball)
 {
-    if(milliseconds_elapsed(&paddle->moved_at) < paddle_delay)
+    if(paddle->vx == 0 ||
+        (ball->x == paddle->x + paddle->vx && ball->y == paddle->y))
+    {
         return;
-
-    gettimeofday(&paddle->moved_at, NULL);
+    }
 
     paddle_hide(win, paddle);
+
     paddle->x += paddle->vx;
     if(paddle->x < 1)
         paddle->x = 1;
@@ -45,5 +48,46 @@ void paddle_move(WINDOW *win, struct paddle_t *paddle)
 
     paddle_show(win, paddle);
 
-    paddle->vx = 0;
+    gettimeofday(&paddle->moved_at, NULL);
+}
+
+void tpaddle_move(WINDOW *win, struct paddle_t *tpaddle,
+    const struct ball_t *ball)
+{
+    int dx = tpaddle->x + paddle_width / 2 - ball->x;
+
+    if(milliseconds_elapsed(&tpaddle->moved_at) < tpaddle_delay)
+        return;
+
+    if(ball->vy == -1 && abs(dx) > 2) {
+        if(ball->vx == -1)
+        {
+            if(dx > 0)
+                tpaddle->vx = -1;
+            else
+                tpaddle->vx = 1;
+        }
+        else if(ball->vx == 1)
+        {
+            if(dx < 0)
+                tpaddle->vx = 1;
+            else
+                tpaddle->vx = -1;
+        }
+    } else if(ball->vy == 1) {
+        tpaddle->vx = 0;
+    }
+
+    paddle_move(win, tpaddle, ball);
+}
+
+void bpaddle_move(WINDOW *win, struct paddle_t *bpaddle,
+    const struct ball_t *ball)
+{
+    if(milliseconds_elapsed(&bpaddle->moved_at) < bpaddle_delay)
+        return;
+
+    paddle_move(win, bpaddle, ball);
+
+    bpaddle->vx = 0;
 }
