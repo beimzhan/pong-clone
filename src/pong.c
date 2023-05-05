@@ -10,8 +10,7 @@ const char bpaddle_win_msg[] = "Congratulations on your victory!";
 const char tpaddle_win_msg[] = "Bot is the winner :(";
 
 const char restart_message[] =
-    "Press any key to start a new game. %d seconds left.";
-
+    "Press any key to start a new game. %d second%s left. ";
 
 enum pong_state_t {
     pong_enter_s, pong_update_s, pong_game_over_s,
@@ -148,10 +147,11 @@ void pong_game_over(const struct board_t *board, int *restart)
         mvwprintw(board->window, y, x, tpaddle_win_msg);
     }
 
-    x = (board_width - sizeof(restart_message) + 4) / 2;
     y = board_height / 2 + 1;
     for(time_left = restart_delay; time_left > 0; time_left--) {
-        mvwprintw(board->window, y, x, restart_message, time_left);
+        x = (board_width - sizeof(restart_message) + 6) / 2;
+        mvwprintw(board->window, y, x, restart_message, time_left,
+            time_left == 1 ? "" : "s");
         wrefresh(board->window);
 
         flushinp();
