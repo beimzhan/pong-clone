@@ -5,7 +5,7 @@
 
 int check_screen_size()
 {
-    return COLS >= board_width + 2 && LINES >= board_height + 2;
+    return COLS >= 80 && LINES >= board_height + 2;
 }
 
 void board_net_show(WINDOW *win)
@@ -13,27 +13,38 @@ void board_net_show(WINDOW *win)
     mvwhline(win, board_height / 2, 1, '.', board_width);
 }
 
-static void board_window_create(WINDOW **win)
+void board_scores_show(const struct board_t *board)
+{
+    mvwprintw(board->scores, 0, 0, "%d", board->tpaddle.score);
+    mvwprintw(board->scores, 2, 0, "%d", board->bpaddle.score);
+    wrefresh(board->scores);
+}
+
+static void board_windows_create(struct board_t *board)
 {
     int x, y;
     x = (COLS - (board_width + 2)) / 2;
     y = (LINES - (board_height + 2)) / 2;
-    *win = newwin(board_height + 2, board_width + 2, y, x);
-    box(*win, 0, 0);
-    keypad(*win, TRUE);
-    wtimeout(*win, 0);
+    board->window = newwin(board_height + 2, board_width + 2, y, x);
+    board->scores = newwin(3, 1, LINES / 2 - 2, x - 5);
+    box(board->window, 0, 0);
+    keypad(board->window, TRUE);
+    wtimeout(board->window, 0);
 }
 
-void board_window_erase(WINDOW *win)
+void board_windows_erase(struct board_t *board)
 {
-    wclear(win);
-    wrefresh(win);
-    delwin(win);
+    wclear(board->window);
+    wclear(board->scores);
+    wrefresh(board->window);
+    wrefresh(board->scores);
+    delwin(board->window);
+    delwin(board->scores);
 }
 
 void board_initialize(struct board_t *board)
 {
-    board_window_create(&board->window);
+    board_windows_create(board);
 
     ball_initialize(board->window, &board->ball, rand() % 2);
 
@@ -49,8 +60,8 @@ void board_initialize(struct board_t *board)
 
 void board_reinitialize(struct board_t *board)
 {
-    board_window_erase(board->window);
-    board_window_create(&board->window);
+    board_windows_erase(board);
+    board_windows_create(board);
     paddle_show(board->window, &board->tpaddle);
     paddle_show(board->window, &board->bpaddle);
     board_net_show(board->window);

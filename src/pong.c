@@ -67,14 +67,9 @@ static void ball_move(struct board_t *board, enum ball_move_result_t *result)
         return;
     }
 
-    ball_show(board->window, &board->ball);
-}
+    board_net_show(board->window);
 
-static void pong_display_scores(const struct board_t *board)
-{
-    int y = board_height / 2;
-    mvwprintw(board->window, y - 1, 3, "%d", board->tpaddle.score);
-    mvwprintw(board->window, y + 1, 3, "%d", board->bpaddle.score);
+    ball_show(board->window, &board->ball);
 }
 
 static void pong_update(struct board_t *board, enum pong_state_t *state)
@@ -111,7 +106,6 @@ static void pong_update(struct board_t *board, enum pong_state_t *state)
 
         bpaddle_move(board->window, &board->bpaddle, &board->ball);
         tpaddle_move(board->window, &board->tpaddle, &board->ball);
-        board_net_show(board->window);
         ball_move(board, &result);
         switch(result) {
             case ball_tpaddle_scored:
@@ -126,7 +120,7 @@ static void pong_update(struct board_t *board, enum pong_state_t *state)
             case ball_in_play:
                 { }
         }
-        pong_display_scores(board);
+        board_scores_show(board);
 
         wrefresh(board->window);
     }
@@ -196,14 +190,14 @@ void pong_play()
                 break;
             case pong_game_over_s:
                 pong_game_over(&board, &restart);
-                board_window_erase(board.window);
+                board_windows_erase(&board);
                 if(restart)
                     pong_state = pong_enter_s;
                 else
                     pong_state = pong_leave_s;
                 break;
             case pong_game_terminated_s:
-                board_window_erase(board.window);
+                board_windows_erase(&board);
                 pong_state = pong_leave_s;
                 break;
             case pong_leave_s:
