@@ -33,7 +33,9 @@ static void paddle_move(WINDOW *win, struct paddle_t *paddle,
     const struct ball_t *ball)
 {
     if(paddle->vx == 0 ||
-        (ball->x == paddle->x + paddle->vx && ball->y == paddle->y))
+        ((ball->x == paddle->x + paddle->vx ||
+            ball->x == paddle->x + paddle_width + paddle->vx) &&
+        ball->y == paddle->y))
     {
         return;
     }
