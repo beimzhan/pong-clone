@@ -25,7 +25,8 @@ static int will_ball_bounce_off_paddle(const struct ball_t *ball,
     const struct paddle_t *paddle)
 {
     return ball->y == (paddle->is_bottom ? paddle->y - 1 : paddle->y + 1) &&
-        ball->x >= paddle->x - 1 && ball->x <= paddle->x + paddle_width;
+        ball->x >= paddle->x - 1 && ball->x <= paddle->x + paddle_width &&
+        ball->vy == (paddle->is_bottom ? 1 : -1);
 }
 
 static void ball_bounce(struct ball_t *ball)
@@ -47,6 +48,12 @@ static void ball_move(struct board_t *board, enum ball_move_result_t *result)
     gettimeofday(&board->ball.moved_at, NULL);
 
     ball_hide(board->window, &board->ball);
+
+    if(will_ball_bounce_off_paddle(&board->ball, &board->tpaddle) ||
+        will_ball_bounce_off_paddle(&board->ball, &board->bpaddle))
+    {
+        ball_bounce(&board->ball);
+    }
 
     board->ball.x += board->ball.vx;
     if(board->ball.x == 1)
@@ -118,7 +125,7 @@ static void pong_update(struct board_t *board, enum pong_state_t *state)
                 break;
             case ball_didnt_move:
             case ball_in_play:
-                { }
+                break;
         }
         board_scores_show(board);
 
@@ -128,7 +135,7 @@ static void pong_update(struct board_t *board, enum pong_state_t *state)
 
 void pong_game_over(const struct board_t *board, int *restart)
 {
-    int x, y, time_left, ch;
+    int x, y, time_left;
 
     *restart = 0;
 
@@ -143,6 +150,8 @@ void pong_game_over(const struct board_t *board, int *restart)
 
     y = board_height / 2 + 1;
     for(time_left = restart_delay; time_left > 0; time_left--) {
+        int ch;
+
         x = (board_width - sizeof(restart_message) + 6) / 2;
         mvwprintw(board->window, y, x, restart_message, time_left,
             time_left == 1 ? "" : "s");
@@ -201,7 +210,7 @@ void pong_play()
                 pong_state = pong_leave_s;
                 break;
             case pong_leave_s:
-                { }
+                break;
         }
     } while(pong_state != pong_leave_s);
 
