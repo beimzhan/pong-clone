@@ -1,0 +1,40 @@
+name: Build and upload release asset
+
+on:
+  release:
+    types: published
+
+jobs:
+  release:
+    runs-on: ubuntu-22.04
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Install build dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential libncurses-dev libc6-dev
+
+    - name: Build binary
+      run: |
+        make build -C src
+
+    - name: Create release asset
+      run: |
+        ARCHIVE_NAME=pong-${{ github.event.release.tag_name }}-linux-amd64
+        ARCHIVE_EXT=tar.gz
+
+        mkdir $ARCHIVE_NAME/
+        cp LICENSE src/pong $ARCHIVE_NAME/
+
+        tar -czvf $ARCHIVE_NAME.$ARCHIVE_EXT $ARCHIVE_NAME/
+
+        echo "RELEASE_ASSET=$ARCHIVE_NAME.$ARCHIVE_EXT" >> "$GITHUB_ENV"
+
+    - name: Upload release asset
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        gh release upload ${{ github.event.release.tag_name }} "$RELEASE_ASSET"
