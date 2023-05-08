@@ -1,10 +1,12 @@
 CC = gcc
 
-ifneq (build, $(MAKECMDGOALS))
-CFLAGS = -g -Wall -Wextra
-endif
-
+ifeq (build, $(MAKECMDGOALS))
+CFLAGS = -static
 LDFLAGS = -lncurses -ltinfo
+else
+CFLAGS = -g -Wall -Wextra
+LDFLAGS = -lncurses
+endif
 
 SRCS = $(filter-out main.c, $(wildcard *.c))
 OBJS = $(SRCS:.c=.o)
@@ -26,9 +28,9 @@ deps.mk: $(SRCS)
 	$(CC) -MM $^ > $@
 
 $(PROG): main.c $(OBJS)
-	$(CC) -static $^ $(LDFLAGS) -o $@
+	$(CC) $(CFLAGS) $^ $(LDFLAGS) -o $@
 
 clean:
 	rm -rf *.o $(PROG) deps.mk
 
-.PHONY = all clean
+.PHONY = all build clean
