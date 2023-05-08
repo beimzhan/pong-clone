@@ -1,7 +1,5 @@
 #include "ball.h"
-
 #include <stdlib.h>
-
 #include "constants.h"
 
 void ball_hide(WINDOW *win, const struct ball_t *ball)

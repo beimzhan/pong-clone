@@ -3,6 +3,7 @@
 
 #include <ncurses.h>
 #include <sys/time.h>
+#include "ball.h"
 
 struct paddle_t {
   int x, y, vx, is_player, is_bottom, score;

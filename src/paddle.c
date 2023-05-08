@@ -1,8 +1,5 @@
 #include "paddle.h"
-
 #include <stdlib.h>
-
-#include "ball.h"
 #include "clock.h"
 #include "constants.h"
 
@@ -63,7 +60,7 @@ void tpaddle_move(WINDOW *win,
   if (milliseconds_elapsed(&tpaddle->moved_at) < tpaddle_delay)
     return;
 
-  if (ball->vy == -1 && abs(dx) > 2) {
+  if (ball->vy == -1 && abs(dx) >= 3) {
     if (ball->vx == -1) {
       if (dx > 0)
         tpaddle->vx = -1;

@@ -1,8 +1,6 @@
 #include "pong.h"
-
 #include <ncurses.h>
 #include <stdlib.h>
-
 #include "ball.h"
 #include "board.h"
 #include "clock.h"

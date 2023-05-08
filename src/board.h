@@ -3,7 +3,6 @@
 
 #include <ncurses.h>
 #include <sys/time.h>
-
 #include "ball.h"
 #include "paddle.h"
 

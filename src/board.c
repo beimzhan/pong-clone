@@ -1,7 +1,5 @@
 #include "board.h"
-
 #include <stdlib.h>
-
 #include "clock.h"
 #include "constants.h"
 
