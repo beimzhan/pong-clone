@@ -12,8 +12,8 @@ enum { paddle_width = 10, tpaddle_delay = 60, bpaddle_delay = 50 };
 enum { endgame_score = 3 };
 
 enum {
-    restart_delay = 5, /* seconds */
-    restart_tick_duration = 1000 /* milliseconds */
+  restart_delay = 5,           /* seconds */
+  restart_tick_duration = 1000 /* milliseconds */
 };
 
 #endif

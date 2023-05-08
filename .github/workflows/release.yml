@@ -19,7 +19,7 @@ jobs:
 
     - name: Build binary
       run: |
-        make build -C src
+        make build -C src/
 
     - name: Create release asset
       run: |

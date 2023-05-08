@@ -1,16 +1,17 @@
 #ifndef BOARD_H_SENTRY
 #define BOARD_H_SENTRY
 
-#include <sys/time.h>
 #include <ncurses.h>
+#include <sys/time.h>
+
 #include "ball.h"
 #include "paddle.h"
 
 struct board_t {
-    WINDOW *window, *scores;
-    struct ball_t ball;
-    struct paddle_t tpaddle, bpaddle;
-    struct timeval loop_start;
+  WINDOW *window, *scores;
+  struct ball_t ball;
+  struct paddle_t tpaddle, bpaddle;
+  struct timeval loop_start;
 };
 
 int check_screen_size();
