@@ -6,25 +6,43 @@ on:
 
 jobs:
   release:
-    runs-on: ubuntu-22.04
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-22.04, macos-12]
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Install build dependencies
+    - name: Install build dependencies (Linux)
+      if: ${{ runner.os == 'Linux' }}
       run: |
         sudo apt-get update
         sudo apt-get install -y build-essential libncurses-dev libc6-dev
 
-    - name: Build binary
+    - name: Install build dependencies (macOS)
+      if: ${{ runner.os == 'macOS' }}
+      run: |
+        brew install make
+
+    - name: Build binary (Linux)
+      if: ${{ runner.os == 'Linux' }}
       run: |
         make build -C src/
 
+    - name: Build binary (macOS)
+      if: ${{ runner.os == 'macOS' }}
+      run: |
+        make macos -C src/
+
     - name: Create release asset
       run: |
-        ARCHIVE_NAME=pong-${{ github.event.release.tag_name }}-linux-amd64
         ARCHIVE_EXT=tar.gz
+        if [ ${{ runner.os }} = 'Linux' ]; then
+          ARCHIVE_NAME="pong-${{ github.event.release.tag_name }}-linux-amd64"
+        elif [ ${{ runner.os }} = 'macOS' ]; then
+          ARCHIVE_NAME="pong-${{ github.event.release.tag_name }}-macos-amd64"
 
         mkdir $ARCHIVE_NAME/
         cp LICENSE src/pong $ARCHIVE_NAME/

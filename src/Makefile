@@ -4,8 +4,10 @@ ifeq (build, $(MAKECMDGOALS))
 CFLAGS = -static
 LDFLAGS = -lncurses -ltinfo
 else
-CFLAGS = -g -Wall -Wextra
 LDFLAGS = -lncurses
+ifneq (macos, $(MAKECMDGOALS))
+CFLAGS = -g -Wall -Wextra
+endif
 endif
 
 SRCS = $(filter-out main.c, $(wildcard *.c))
@@ -16,6 +18,8 @@ PROG = pong
 all: $(PROG)
 
 build: clean $(PROG)
+
+macos: clean $(PROG)
 
 %.o: %.c %.h
 	$(CC) $(CFLAGS) -c $< -o $@
