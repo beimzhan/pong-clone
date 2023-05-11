@@ -43,6 +43,7 @@ jobs:
           ARCHIVE_NAME="pong-${{ github.event.release.tag_name }}-linux-amd64"
         elif [ ${{ runner.os }} = 'macOS' ]; then
           ARCHIVE_NAME="pong-${{ github.event.release.tag_name }}-macos-amd64"
+        fi
 
         mkdir $ARCHIVE_NAME/
         cp LICENSE src/pong $ARCHIVE_NAME/
