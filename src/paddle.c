@@ -55,28 +55,18 @@ void tpaddle_move(WINDOW *win,
                   struct paddle_t *tpaddle,
                   const struct ball_t *ball)
 {
-  int dx = tpaddle->x + paddle_width / 2 - ball->x;
+  int dx = tpaddle->x + paddle_width / 2 - ball->fx;
 
-  if (milliseconds_elapsed(&tpaddle->moved_at) < tpaddle_delay)
+  if (milliseconds_elapsed(&tpaddle->moved_at) < tpaddle_delay ||
+      (ball->vy == 1 && ball->y < board_height / 3))
     return;
 
-  if (ball->vy == -1 && abs(dx) >= 3) {
-    if (ball->vx == -1) {
-      if (dx > 0)
-        tpaddle->vx = -1;
-      else
-        tpaddle->vx = 1;
-    }
-    else if (ball->vx == 1) {
-      if (dx < 0)
-        tpaddle->vx = 1;
-      else
-        tpaddle->vx = -1;
-    }
-  }
-  else if (ball->vy == 1) {
+  if (dx >= 1)
+    tpaddle->vx = -1;
+  else if (dx <= -1)
+    tpaddle->vx = 1;
+  else
     tpaddle->vx = 0;
-  }
 
   paddle_move(win, tpaddle, ball);
 }

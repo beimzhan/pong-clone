@@ -38,6 +38,7 @@ static int will_ball_bounce_off_paddle(const struct ball_t *ball,
 static void ball_bounce(struct ball_t *ball)
 {
   ball->vy *= -1;
+  ball_predict(ball);
 }
 
 static void ball_move(struct board_t *board, enum ball_move_result_t *result)

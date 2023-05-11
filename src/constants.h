@@ -5,9 +5,9 @@ enum { tick_duration = 10 };
 
 enum { board_width = 60, board_height = 22 };
 
-enum { ball_spawn_delay = 1000, ball_delay = 100 };
+enum { ball_spawn_delay = 1000, ball_delay = 90 };
 
-enum { paddle_width = 10, tpaddle_delay = 60, bpaddle_delay = 50 };
+enum { paddle_width = 10, tpaddle_delay = 100, bpaddle_delay = 70 };
 
 enum { endgame_score = 3 };
 
